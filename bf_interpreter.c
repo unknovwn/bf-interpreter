@@ -1,17 +1,4 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <errno.h>
-
-#define BUFFER_SIZE 1024
-#define MEMORY_SIZE 65536
-
-#define INSTRUCTIONS_SET "><+-.,[]"
-
-typedef void (*actions_array)(char **instructions, char **memory);
+#include "bf_interpreter.h"
 
 char *parse_file(int fd)
 {
