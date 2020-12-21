@@ -1,6 +1,6 @@
 #include "bf_interpreter.h"
 
-int  check_brackets(char *instructions)
+int check_brackets(char *instructions)
 {
 	int brackets;
 
