@@ -1,141 +1,55 @@
 #include "bf_interpreter.h"
 
+int  check_brackets(char *instructions)
+{
+	int brackets;
+
+	brackets = 0;
+	for (int i = 0; instructions[i]; i++)
+	{
+		if (!(isspace(instructions[i])))
+		{
+			if (instructions[i] == '[')
+				brackets++;
+			else if (instructions[i] == ']')
+			{
+				brackets--;
+				if (brackets < 0)
+					return (0);
+			}
+		}
+	}
+	return (brackets == 0);
+}
+
 char *parse_file(int fd)
 {
-	char    *result;
+	char    *instructions;
 	char    buf[BUFFER_SIZE + 1];
 	ssize_t count;
-	int     brackets;
 
-	if (!(result = strdup("")))
+	if (!(instructions = strdup("")))
 		return (0);
 	while ((count = read(fd, buf, BUFFER_SIZE)))
 	{
 		if (count == -1)
 		{
-			free(result);
+			free(instructions);
 			return (0);
 		}
 		buf[count] = 0;
-		if (!(result = (char*)realloc(result, (strlen(result) + count + 1))))
+		if (!(instructions = (char*)realloc(instructions,
+						strlen(instructions) + count + 1)))
 			return (0);
-		result = strcat(result, buf);
+		instructions = strcat(instructions, buf);
 	}
-	brackets = 0;
-	for (int i = 0; result[i]; i++)
+	if (!(check_brackets(instructions)))
 	{
-		if (!(isspace(result[i])))
-		{
-			if (result[i] == '[')
-				brackets++;
-			else if (result[i] == ']')
-			{
-				brackets--;
-				if (brackets < 0)
-				{
-					write(2, "Not matching brackets\n", 22);
-					free(result);
-					return (0);
-				}
-			}
-		}
-	}
-	if (brackets > 0)
-	{
-		write(2, "Not matching brackets\n", 22);
-		free(result);
+		free(instructions);
+		write(2, "Brackets are not balanced\n", 26);
 		return (0);
 	}
-	return (result);
-}
-
-void inc_ptr(char **instructions, char **memory)
-{
-	(*memory)++;
-	(*instructions)++;
-}
-
-void dec_ptr(char **instructions, char **memory)
-{
-	(*memory)--;
-	(*instructions)++;
-}
-
-void inc_data(char **instructions, char **memory)
-{
-	(**memory)++;
-	(*instructions)++;
-}
-
-void dec_data(char **instructions, char **memory)
-{
-	(**memory)--;
-	(*instructions)++;
-}
-
-void output_data(char **instructions, char **memory)
-{
-	write(1, *memory, 1);
-	(*instructions)++;
-}
-
-void input_data(char **instructions, char **memory)
-{
-	if ((read(0, *memory, 1)) == -1)
-	{
-		free(*instructions);
-		exit(0);
-	}
-	(*instructions)++;
-}
-
-void block_begin(char **instructions, char **memory)
-{
-	int brackets_counter;
-
-	brackets_counter = 1;
-	(*instructions)++;
-	if (!(**memory))
-	{
-		while (brackets_counter)
-		{
-			if ((**instructions) == '[')
-				brackets_counter++;
-			else if ((**instructions) == ']')
-				brackets_counter--;
-			(*instructions)++;
-		}
-	}
-}
-
-void block_end(char **instructions, char **memory)
-{
-	int brackets_counter;
-
-	brackets_counter = 1;
-	if (**memory)
-	{
-		(*instructions)--;
-		while (brackets_counter)
-		{
-			if ((**instructions) == ']')
-				brackets_counter++;
-			else if ((**instructions) == '[')
-				brackets_counter--;
-			(*instructions)--;
-		}
-		(*instructions)++;
-	}
-	(*instructions)++;
-}
-
-void do_nothing(char **instructions, char **memory)
-{
-	// Getting rid of unused variables warning (:
-	(void)memory;
-
-	(*instructions)++;
-	return ;
+	return (instructions);
 }
 
 void fill_actions_arr(actions_array actions[128])

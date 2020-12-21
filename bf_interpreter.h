@@ -14,4 +14,14 @@
 
 typedef void (*actions_array)(char **instructions, char **memory);
 
+void inc_ptr(char **instructions, char **memory);
+void dec_ptr(char **instructions, char **memory);
+void inc_data(char **instructions, char **memory);
+void dec_data(char **instructions, char **memory);
+void output_data(char **instructions, char **memory);
+void input_data(char **instructions, char **memory);
+void block_begin(char **instructions, char **memory);
+void block_end(char **instructions, char **memory);
+void do_nothing(char **instructions, char **memory);
+
 #endif

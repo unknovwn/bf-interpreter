@@ -1,5 +1,5 @@
 NAME = bfi
-SRC = bf_interpreter.c
+SRC = bf_interpreter.c actions.c
 CC = gcc
 INCLUDE = ./
 CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE)
